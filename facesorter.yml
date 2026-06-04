@@ -1,0 +1,15 @@
+name: facesorter
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pip
+  - numpy
+  - pandas
+  - tqdm
+  - pillow
+  - opencv
+  - pip:
+      - insightface
+      - onnxruntime
+      - pillow-heif
