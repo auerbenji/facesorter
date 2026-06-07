@@ -21,6 +21,7 @@ def main():
     parser.add_argument("--scores", default="out/scores.csv")
     parser.add_argument("--out", default="out")
     parser.add_argument("--threshold", type=float, required=True)
+    parser.add_argument("--max", type=float, default=None)
     parser.add_argument("--clear", action="store_true")
     args = parser.parse_args()
 
@@ -31,7 +32,10 @@ def main():
     if not scores_path.exists():
         raise RuntimeError(f"Missing scores file: {scores_path}. Run score.py first.")
 
-    target_root = out_dir / safe_threshold_name(args.threshold)
+    if args.max is not None:
+        target_root = out_dir / f"threshold_{args.threshold:.2f}_to_{args.max:.2f}"
+    else:
+        target_root = out_dir / safe_threshold_name(args.threshold)
 
     if args.clear and target_root.exists():
         shutil.rmtree(target_root)
@@ -57,6 +61,9 @@ def main():
                 continue
 
             if score < args.threshold:
+                continue
+
+            if args.max is not None and score >= args.max:
                 continue
 
             source = data_dir / row["file"]
