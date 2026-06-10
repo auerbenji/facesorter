@@ -18,7 +18,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### Option B: conda with 'facesorter.yml' 1. Create the environment
+### Option B: conda with `facesorter.yml`
 
 ```bash
 conda env create -f facesorter.yml
@@ -29,25 +29,19 @@ conda activate facesorter
 
 There are three folders necessary to run the scripts
 
-```text
-root/
-  calibration/
-  data/
-  out/
-```
-create the folders via
-
-```bash
-mkdir calibration data out
-```
-
 ### Folders
 
 - `calibration/`: paste reference photos of the target person here
 - `data/`: photos to score
 - `out/`: generated outputs with respect to score
 
-Supported image formats for data folder:
+create the folders via
+
+```bash
+mkdir calibration data out
+```
+
+### Supported image formats for data folder:
 
 ```text
 .jpg
@@ -91,8 +85,8 @@ this creates
 ```text
 out/scores.csv
 ```
-the scoring file containing score, number of people on photo, scoring ok / not ok information.
-This is the expensive step. It shows a progress bar with `it/s` and a `runtime estimate`
+the scoring file contains [image_dir | score | number of people on photo | scoring ok / not ok]
+This is the expensive step. While running, it shows a progress bar with `it/s` and a `runtime estimate`.
 
 ### Step 3: Generate a scoring visualization 'L-curve'
 
@@ -105,24 +99,26 @@ to get a visual impression of the scored data.
 Compare your visualization to the `L-curve.svg` in the repository.
 Changes in the slope's curve indicate a drop in confidence.
 Try to match your treshold cutoffs to changes in the L-cuves slope to disect confidence regions.
-For the attached `.svg` file this translates to the following findings:
-Photos with scores from `0.8` to `0.4` hold triple-A grade curated face recognition data.
-Photos with scores from `0.4` to `0.2` hold some positives but are noisy with fale positives.
-Photos with scores from `0.2` to `0.0 ` hold many false positives.
-Values of `-1` mean there is no face recognition indication that this is typically a landscape photo.
+For the attached `Lcurve.svg` file this translates to the following findings:
+
+- Photos with scores from `0.8` to `0.4` hold triple-A grade curated face recognition data.
+- Photos with scores from `0.4` to `0.2` hold some positives but are noisy with fale positives.
+- Photos with scores from `0.2` to `0.0 ` hold many false positives.
+- Values of `-1` mean there is no face recognition indication that this is typically a landscape photo.
+
 Depending on the quality of your `calibration.npz` file your scoring may vary.
 The curve, however, should look similar.
 
 ### Step 4: Export by threshold
 
 ```bash
-python export_threshold.py --data data --scores out/scores.csv --out out --threshold 0.52 --clear
+python export_threshold.py --data data --scores out/scores.csv --out out --threshold 0.50 --clear
 ```
 
 Creates:
 
 ```text
-out/threshold_0.52/
+out/threshold_0.50/
 ```
 
 You may also run a threshold window, carving out confidence region
