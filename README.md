@@ -18,7 +18,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### Option B: conda with 'facesorter.yml' 1. Create the environment
+### Option B: conda with `facesorter.yml`
 
 ```bash
 conda env create -f facesorter.yml
@@ -35,6 +35,7 @@ root/
   data/
   out/
 ```
+
 create the folders via
 
 ```bash
@@ -91,7 +92,7 @@ this creates
 ```text
 out/scores.csv
 ```
-the scoring file containing score, number of people on photo, scoring ok / not ok information.
+the scoring file contains `file`, `score`, `num_faces`, `status`, and `error` information.
 This is the expensive step. It shows a progress bar with `it/s` and a `runtime estimate`
 
 ### Step 3: Generate a scoring visualization 'L-curve'
@@ -99,17 +100,28 @@ This is the expensive step. It shows a progress bar with `it/s` and a `runtime e
 Run
 
 ```bash
-python visualize.py --data data --out out
+python visualization.py --scores out/scores.csv --out out
 ```
-to get a visual impression of the scored data.
+
+to load the score CSV, sort all scores in descending order, and create an SVG curve in the output folder.
+
+Creates:
+
+```text
+out/L-curve.svg
+```
+
+The y axis shows the score. The x axis shows the sorted photo rank, starting at 1 for the highest-scoring photo.
 Compare your visualization to the `L-curve.svg` in the repository.
 Changes in the slope's curve indicate a drop in confidence.
-Try to match your treshold cutoffs to changes in the L-cuves slope to disect confidence regions.
+Try to match your threshold cutoffs to changes in the L-curve slope to dissect confidence regions.
 For the attached `.svg` file this translates to the following findings:
-Photos with scores from `0.8` to `0.4` hold triple-A grade curated face recognition data.
-Photos with scores from `0.4` to `0.2` hold some positives but are noisy with fale positives.
-Photos with scores from `0.2` to `0.0 ` hold many false positives.
-Values of `-1` mean there is no face recognition indication that this is typically a landscape photo.
+
+- Photos with scores from `0.8` to `0.4` hold triple-A grade curated face recognition data.
+- Photos with scores from `0.4` to `0.2` hold some positives but are noisy with false positives.
+- Photos with scores from `0.2` to `0.0` hold many false positives.
+- Values of `-1` mean there is no face recognition indication that this is typically a landscape photo.
+
 Depending on the quality of your `calibration.npz` file your scoring may vary.
 The curve, however, should look similar.
 
@@ -136,5 +148,6 @@ Folder names can be changed. Example:
 
 ```bash
 python score.py --data input --out results
+python visualization.py --scores results/scores.csv --out results
 python export_threshold.py --data input --scores results/scores.csv --out results --threshold 0.52 --clear
 ```
