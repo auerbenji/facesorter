@@ -93,9 +93,18 @@ This is the expensive step. While running, it shows a progress bar with `it/s` a
 Run
 
 ```bash
-python visualize.py --data data --out out
+python visualization.py --scores out/scores.csv --out out
 ```
-to get a visual impression of the scored data.
+
+to load the score CSV, sort all scores in descending order, and create an SVG curve in the output folder.
+
+Creates:
+
+```text
+out/L-curve.svg
+```
+
+The y axis shows the score. The x axis shows the sorted photo rank, starting at 1 for the highest-scoring photo.
 Compare your visualization to the `L-curve.svg` in the repository.
 Changes in the slope's curve indicate a drop in confidence.
 Try to match your treshold cutoffs to changes in the L-cuves slope to disect confidence regions.
@@ -132,5 +141,6 @@ Folder names can be changed. Example:
 
 ```bash
 python score.py --data input --out results
+python visualization.py --scores results/scores.csv --out results
 python export_threshold.py --data input --scores results/scores.csv --out results --threshold 0.52 --clear
 ```
