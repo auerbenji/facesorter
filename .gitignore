@@ -1,4 +1,5 @@
 # Project outputs
+data/
 out/
 calibration/
 .venv/
