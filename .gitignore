@@ -1,7 +1,8 @@
 # Project outputs
+.venv/
+data/
 out/
 calibration/
-.venv/
 
 # General
 .DS_Store
