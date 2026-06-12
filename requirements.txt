@@ -1,9 +1,10 @@
-numpy
-pandas
-tqdm
-Pillow
-opencv-python-headless
-insightface
-onnxruntime
-pillow-heif
-matplotlib
+# Python 3.12.x is recommended. These bounded ranges target current stable majors.
+numpy>=2.4.6,<3
+pandas>=3.0.3,<4
+tqdm>=4.68.2,<5
+Pillow>=12.2.0,<13
+opencv-python>=4.13.0.92,<5
+insightface>=1.0.1,<2
+onnxruntime>=1.26.0,<2
+pillow-heif>=1.4.0,<2
+matplotlib>=3.11.0,<4

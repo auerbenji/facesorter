@@ -2,27 +2,15 @@
 
 Minimal local workflow to find photos that likely contain a target person's face.
 
-There are two options for installation
-1) conda with facesorter.yml
-2) pip with requirements.txt
-
 ## 1. Create the environment
 
-### Option A: pip with `requirements.txt`
-
-Use this option if you want a standard Python virtual environment.
+Use Python 3.12 and run
 
 ```bash
+python --version
 python -m venv .venv
 source .venv/bin/activate
-pip install -r requirements.txt
-```
-
-### Option B: conda with `facesorter.yml`
-
-```bash
-conda env create -f facesorter.yml
-conda activate facesorter
+python -m pip install -r requirements.txt
 ```
 
 ## 2. Required folder structure
@@ -38,49 +26,49 @@ There are three folders necessary to run the scripts
 create the folders via
 
 ```bash
-mkdir calibration data out
+mkdir calibration data
 ```
+and paste your files accordinly.
+`out` is automatically created when running `calibration.py` or `score.py`
+
+
 
 ### Supported image formats for data folder:
 
 ```text
-.jpg
-.jpeg
-.heic
-.heif
-.hif
+.jpg, .jpeg, .heic, .heif, .hif
 ```
 
-## 3. Run order
+## 3. Run scripts in order
 
 ### Step 1: Create identity profile
 
 Use approx 10-20 photos of your target person as calibration data.
 I used Apple Photos person library and selected front and side photos, with and without hat/cap, no sunglasses.
 
+Run
+
 ```bash
-python calibrate.py --calibration calibration --out out
+python calibrate.py --calibration calibration --out out --identity identity_person.npz
 ```
 
-Creates:
+yielding
 
 ```text
-out/identity.npz
+out/identity_person.npz
 ```
-Note that this identity is a personalized identity vector that may be stored for future use.
+
+holding a 512-dimensional identity vector of the face of interest.
 
 ### Step 2: Score all images
 
+Run
+
 ```bash
-python score.py --data data --out out
+python score.py --data data --out out --identity out/identity_person.npz
 ```
 
-Note that a personalized identity vector may be used
-```bash
-python score.py --data data --out out --identity out/identity_Person.npz
-```
-
-this creates
+yielding
 
 ```text
 out/scores.csv
@@ -96,51 +84,43 @@ Run
 python visualization.py --scores out/scores.csv --out out
 ```
 
-to load the score CSV, sort all scores in descending order, and create an SVG curve in the output folder.
-
-Creates:
+yielding
 
 ```text
 out/L-curve.svg
 ```
 
-The y axis shows the score. The x axis shows the sorted photo rank, starting at 1 for the highest-scoring photo.
 Compare your visualization to the `L-curve.svg` in the repository.
 Changes in the slope's curve indicate a drop in confidence.
-Try to match your treshold cutoffs to changes in the L-cuves slope to disect confidence regions.
-For the attached `Lcurve.svg` file this translates to the following findings:
+Try to match your treshold cut-off to changes in the L-cuves slope to disect confidence regions.
+The attached 'L-curve.svg' in the repository holds information on how to interpret the score.
 
-- Photos with scores from `0.8` to `0.4` hold triple-A grade curated face recognition data.
-- Photos with scores from `0.4` to `0.2` hold some positives but are noisy with fale positives.
-- Photos with scores from `0.2` to `0.0 ` hold many false positives.
-- Values of `-1` mean there is no face recognition indication that this is typically a landscape photo.
+- Photos with scores from `0.8` to `0.4` typically hold triple-A grade identify photos.
+- Photos with scores from `0.4` to `0.2` typically hold some positives but are noisy with fale positives.
+- Photos with scores from `0.2` to `0.0` typically hold many false positives.
+- Values of `-1` typically hold landscape photos
 
 Depending on the quality of your `calibration.npz` file your scoring may vary.
 The curve, however, should look similar.
 
 ### Step 4: Export by threshold
 
+Run
+
 ```bash
 python export_threshold.py --data data --scores out/scores.csv --out out --threshold 0.50 --clear
 ```
 
-Creates:
+yielding
 
 ```text
 out/threshold_0.50/
 ```
 
-You may also run a threshold window, carving out confidence region
+the folder with the extracted photos.
+
+### Note
+You may also run a threshold window, carving out confidence regions as indicated by the `L-curve.svg` by running
 ```bash
 python export_threshold.py --data data --scores out/scores.csv --out out --threshold 0.50 --max 0.70 --clear
-```
-
-## Note on custom folder names
-
-Folder names can be changed. Example:
-
-```bash
-python score.py --data input --out results
-python visualization.py --scores results/scores.csv --out results
-python export_threshold.py --data input --scores results/scores.csv --out results --threshold 0.52 --clear
 ```
