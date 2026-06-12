@@ -50,12 +50,16 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--calibration", default="calibration")
     parser.add_argument("--out", default="out")
+    parser.add_argument("--identity", default="identity.npz")
     parser.add_argument("--det-size", type=int, default=640)
     args = parser.parse_args()
 
     calibration_dir = Path(args.calibration)
     out_dir = Path(args.out)
     out_dir.mkdir(parents=True, exist_ok=True)
+    identity_path = Path(args.identity)
+    if not identity_path.is_absolute():
+        identity_path = out_dir / identity_path
 
     image_paths = list(iter_images(calibration_dir))
     if not image_paths:
@@ -94,7 +98,7 @@ def main():
 
     embeddings = np.vstack(embeddings).astype(np.float32)
 
-    identity_path = out_dir / "identity.npz"
+    identity_path.parent.mkdir(parents=True, exist_ok=True)
     np.savez_compressed(
         identity_path,
         embeddings=embeddings,
